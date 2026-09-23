@@ -1,29 +1,29 @@
 # Hydra
 
-Hydra es el fork independiente de [Orca](https://github.com/stablyai/orca),
-mantenido en [juan-pujante/hydra](https://github.com/juan-pujante/hydra).
-Su objetivo es desarrollar mejoras de coordinación multiagente con decisiones
-y calendario propios, conservando la posibilidad de integrar mejoras de Orca.
+Hydra is an independent fork of [Orca](https://github.com/stablyai/orca),
+maintained at [juan-pujante/hydra](https://github.com/juan-pujante/hydra).
+Its goal is to improve multi-agent coordination with its own decisions and
+schedule, while retaining the ability to integrate improvements from Orca.
 
-## Base y licencia
+## Baseline and license
 
-- Revisión de Orca tomada como base inicial: `519bde81df438478ff1c6ac010f1339f32a306ee`.
-- Se conserva el historial Git y la [licencia MIT original](LICENSE).
-- Esta preparación añade documentación; todavía no cambia el comportamiento,
-  la identidad de la aplicación ni sus servicios externos.
-- Los enlaces de descarga del README original corresponden a Orca. Hydra
-  todavía no publica instaladores propios.
+- Initial Orca baseline revision: `519bde81df438478ff1c6ac010f1339f32a306ee`.
+- The Git history and [original MIT license](LICENSE) are preserved.
+- This setup adds documentation; it does not yet change the application's
+  behavior, identity, or external services.
+- Download links in the original README point to Orca. Hydra does not yet
+  publish its own installers.
 
-## Remotos y ramas
+## Remotes and branches
 
 - `origin`: `https://github.com/juan-pujante/hydra.git`.
 - `upstream`: `https://github.com/stablyai/orca.git`.
-- `main`: versión estable de Hydra.
-- `feature/<mejora>` y `fix/<problema>`: cambios propios pequeños y revisables.
-- `sync/orca-<fecha>`: integración temporal de una actualización del original.
+- `main`: stable version of Hydra.
+- `feature/<improvement>` and `fix/<issue>`: small, reviewable changes of our own.
+- `sync/orca-<date>`: temporary integration of an upstream update.
 
-En una nueva copia, clonar `origin` y añadir `upstream`. Configuración local
-recomendada (no modifica otros repositorios):
+For a new checkout, clone `origin` and add `upstream`. Recommended local
+configuration (does not affect other repositories):
 
 ```sh
 git remote add upstream https://github.com/stablyai/orca.git
@@ -32,66 +32,63 @@ git config pull.ff only
 git config rerere.enabled true
 ```
 
-`rerere` recuerda resoluciones de conflictos para reutilizarlas; siempre revisar
-el resultado. No reescribir la historia publicada de `main` ni hacer force-push
-para igualarla a Orca.
+`rerere` remembers conflict resolutions for reuse; always review the result.
+Do not rewrite the published history of `main` or force-push to match Orca.
 
-## Integrar una actualización de Orca
+## Integrating an Orca update
 
-Empezar con el árbol de trabajo limpio y sustituir `AAAA-MM-DD` por la fecha:
+Start with a clean working tree and replace `YYYY-MM-DD` with the date:
 
 ```sh
 git switch main
 git pull --ff-only origin main
 git fetch upstream main --no-tags
-git switch -c sync/orca-AAAA-MM-DD
+git switch -c sync/orca-YYYY-MM-DD
 git merge --no-ff upstream/main
 ```
 
-También se puede integrar un commit concreto ya descargado en lugar de
-`upstream/main`. Resolver y revisar los conflictos conservando las decisiones
-propias de Hydra. Si se quiere abandonar un merge en conflicto, usar
-`git merge --abort`.
+You can also integrate a specific commit that has already been fetched instead
+of `upstream/main`. Resolve and review conflicts while preserving Hydra's own
+decisions. To abandon a merge with conflicts, use `git merge --abort`.
 
-Validar la integración siguiendo [CONTRIBUTING.md](.github/CONTRIBUTING.md),
-incluyendo lint, tipos, pruebas y compilación, además de las pruebas de las
-funcionalidades propias afectadas. Registrar en este documento la revisión de
-Orca integrada y los cambios deliberadamente adaptados o revertidos.
+Validate the integration following [CONTRIBUTING.md](.github/CONTRIBUTING.md),
+including lint, type checks, tests, and the build, as well as tests for any
+affected custom features. Record the integrated Orca revision and any changes
+deliberately adapted or reverted in this document.
 
-Publicar la rama y abrir el PR **en Hydra**, indicando siempre el repositorio
-para evitar que GitHub CLI lo dirija al proyecto original:
+Push the branch and open the PR **in Hydra**, always specifying the repository
+to prevent GitHub CLI from targeting the upstream project:
 
 ```sh
-git push -u origin sync/orca-AAAA-MM-DD
-gh pr create --repo juan-pujante/hydra --base main --head sync/orca-AAAA-MM-DD
+git push -u origin sync/orca-YYYY-MM-DD
+gh pr create --repo juan-pujante/hydra --base main --head sync/orca-YYYY-MM-DD
 ```
 
-Usar la plantilla de PR del repositorio. Incorporar las sincronizaciones con
-un **merge commit**, no con squash ni rebase: debe conservarse la ascendencia
-de Orca para los siguientes merges. Reservar `cherry-pick -x` para arreglos
-puntuales y revisar sus dependencias.
+Use the repository's PR template. Integrate upstream updates with a **merge
+commit**, not squash or rebase: Orca's ancestry must be preserved for future
+merges. Reserve `cherry-pick -x` for targeted fixes and review their dependencies.
 
-## Desarrollo propio
+## Independent development
 
-Mantener las mejoras separadas de reformateos y renombrados. Reutilizar los
-mecanismos existentes de terminales, worktrees, estado de agentes y ejecución
-remota; documentar aquí cualquier cambio de sus contratos. Las contribuciones
-al proyecto original se preparan en ramas independientes desde `upstream/main`.
+Keep improvements separate from reformatting and renaming. Reuse the existing
+mechanisms for terminals, worktrees, agent status, and remote execution;
+document any changes to their contracts here. Prepare contributions to the
+upstream project on separate branches based on `upstream/main`.
 
-Antes de distribuir Hydra o usarla junto a una instalación de Orca, preparar
-un cambio específico de identidad y comprobar:
+Before distributing Hydra or using it alongside an Orca installation, prepare
+a dedicated identity change and check:
 
-- Identificadores de aplicación, nombre visible y acceso al llavero.
-- Directorios de datos, perfiles, sockets y procesos auxiliares.
-- Comando CLI y registro de protocolos/enlaces.
-- Actualizaciones, repositorio de releases y firma de instaladores.
-- Servicios externos y compatibilidad con hosts remotos y clientes móviles.
+- Application identifiers, display name, and keychain access.
+- Data directories, profiles, sockets, and helper processes.
+- CLI command and protocol/link registration.
+- Updates, release repository, and installer signing.
+- External services and compatibility with remote hosts and mobile clients.
 
-No basta con cambiar el nombre de `package.json`. La separación de identidad
-requiere validación antes de afirmar que las dos aplicaciones pueden convivir.
+Changing the name in `package.json` is not enough. Identity separation requires
+validation before claiming that the two applications can coexist.
 
-## Registro de diferencias
+## Record of differences
 
-| Cambio | Motivo | Impacto en futuras sincronizaciones |
+| Change | Reason | Impact on future upstream integrations |
 | --- | --- | --- |
-| `FORK.md` | Documentar propiedad, base y mantenimiento de Hydra | Archivo propio; sin cambios al runtime |
+| `FORK.md` | Document Hydra's ownership, baseline, and maintenance | Fork-specific file; no runtime changes |
