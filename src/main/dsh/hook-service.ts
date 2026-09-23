@@ -46,6 +46,9 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
     return [
       '@echo off',
       'setlocal',
+      // Why: same scrub as POSIX — restore the canonical names from their aliases first.
+      'if not defined ORCA_PANE_KEY if defined ORCA_AGENT_PANE set "ORCA_PANE_KEY=%ORCA_AGENT_PANE%"',
+      'if not defined ORCA_AGENT_LAUNCH_TOKEN if defined ORCA_AGENT_LAUNCH set "ORCA_AGENT_LAUNCH_TOKEN=%ORCA_AGENT_LAUNCH%"',
       'if defined ORCA_AGENT_HOOK_ENDPOINT if exist "%ORCA_AGENT_HOOK_ENDPOINT%" call "%ORCA_AGENT_HOOK_ENDPOINT%" 2>nul',
       ...buildWindowsHookEnvironmentGuardLines(),
       buildWindowsAgentHookCurlPostCommand('dsh'),
@@ -57,6 +60,14 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
 
   return [
     '#!/bin/sh',
+    // Why first: DSH's shell executor drops every env var whose NAME contains KEY, TOKEN,
+    // SECRET or PASSWORD before the hook starts, which takes ORCA_PANE_KEY and
+    // ORCA_AGENT_LAUNCH_TOKEN with it. Orca mirrors both onto scrub-safe aliases at spawn
+    // (see agent-hook-scrub-safe-env.ts); restore the canonical names from them so every
+    // line below — including the shared spool and post builders — is unchanged.
+    ': "${ORCA_PANE_KEY:=${ORCA_AGENT_PANE:-}}"',
+    ': "${ORCA_AGENT_LAUNCH_TOKEN:=${ORCA_AGENT_LAUNCH:-}}"',
+    'export ORCA_PANE_KEY ORCA_AGENT_LAUNCH_TOKEN',
     ...buildPosixHookPayloadCapture(),
     ...buildPosixHookSpoolLines('dsh'),
     // Why: the endpoint file holds the live port/token; a PTY that outlived an Orca

@@ -73,6 +73,18 @@ describe('DshHookService', () => {
     expect(readFileSync(scriptPath(), 'utf-8')).toContain('/hook/dsh')
   })
 
+  it('restores the pane identity DSH scrubs before anything reads it', () => {
+    // DSH drops env names containing KEY/TOKEN, so the script has to recover ORCA_PANE_KEY
+    // and ORCA_AGENT_LAUNCH_TOKEN from their aliases before the guard or the spool run.
+    new DshHookService().install()
+    const script = readFileSync(scriptPath(), 'utf-8')
+    const restoreAt = script.indexOf('ORCA_AGENT_PANE')
+    const guardAt = script.indexOf('ORCA_AGENT_HOOK_PORT')
+    expect(restoreAt).toBeGreaterThan(-1)
+    expect(script).toContain('ORCA_AGENT_LAUNCH')
+    expect(restoreAt).toBeLessThan(guardAt)
+  })
+
   it('is idempotent', () => {
     const service = new DshHookService()
     service.install()

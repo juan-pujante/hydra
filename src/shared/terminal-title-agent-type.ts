@@ -4,7 +4,13 @@ import {
   HERMES_AGENT_NAME_RE,
   titleHasAgentName
 } from './agent-name-token-match'
-import { containsAgentSpinnerGlyph, isCursorAgentTitle } from './agent-title-core'
+import {
+  containsAgentSpinnerGlyph,
+  isCursorAgentTitle,
+  isDshTerminalTitle
+} from './agent-title-core'
+
+export { DSH_WHALE, isDshTerminalTitle } from './agent-title-core'
 import { isOpenCodeNativeTitle } from './opencode-terminal-title'
 import {
   getPiCompatibleSyntheticAgentLabel,
@@ -17,17 +23,6 @@ import type { TuiAgent } from './tui-agent'
 export const CLAUDE_IDLE = '\u2733' // ✳ (eight-spoked asterisk — Claude Code idle prefix)
 const CLAUDE_MANAGEMENT_TITLE_RE =
   /^\s*(?:"(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?"|'(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?'|(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?)\s+agents\s*$/i
-
-/** DSH-TUI titles are always `<prefix> 🐋 <session title>` (`useTerminalTitle` in its
- *  Chat screen), and the whale is the only part no other agent emits. It has to be
- *  checked ahead of Gemini and Claude: DSH's idle prefix is `✦`, which is Gemini's
- *  WORKING glyph, and its working prefixes are `⠂`/`⠐`, which are braille spinners
- *  Claude's generic heuristic claims. */
-export const DSH_WHALE = '\u{1F40B}' // 🐋
-
-export function isDshTerminalTitle(title: string): boolean {
-  return title.includes(DSH_WHALE)
-}
 
 export const GEMINI_WORKING = '\u2726' // ✦
 export const GEMINI_SILENT_WORKING = '\u23F2' // ⏲
