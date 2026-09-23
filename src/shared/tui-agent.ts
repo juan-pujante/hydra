@@ -40,3 +40,4 @@ export type TuiAgent =
   | 'trae' // Trae CLI
   | 'muse' // Muse (Meta `muse` CLI)
   | 'prime-agent' // Prime Agent (Prime Intellect)
+  | 'dsh' // DeepSeek Harness (`dsh`, launched through its `dsh-tui` terminal profile)

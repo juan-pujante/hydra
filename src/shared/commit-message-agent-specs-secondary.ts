@@ -137,6 +137,23 @@ export function buildSecondaryCommitMessageAgentSpecs({
       models: [{ id: 'default', label: 'Config default' }],
       defaultModelId: 'default'
     },
+    dsh: {
+      id: 'dsh',
+      label: 'DeepSeek Harness',
+      binary: 'dsh',
+      // Why: `dsh --profile headless "<task>"` runs one fresh persisted session, prints the
+      // final answer and exits — the documented one-shot entry mode. The interactive
+      // `dsh-tui` profile is deliberately not used here; Source Control AI stays one-shot.
+      promptDelivery: 'argv',
+      buildArgs: ({ prompt }) => ['--profile', 'headless', prompt],
+      // Why: the launcher owns `--profile`; a second one would boot a different profile.
+      singletonOptions: [['--profile']],
+      modelSource: 'static',
+      // Why: the headless app parses no `--model`. The model comes from the profile's
+      // `llm-deepseek` row, so the only honest choice here is the configured default.
+      models: [{ id: 'default', label: 'Config default' }],
+      defaultModelId: 'default'
+    },
     copilot: {
       id: 'copilot',
       label: 'GitHub Copilot',

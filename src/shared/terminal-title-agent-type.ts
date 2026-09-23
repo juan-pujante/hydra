@@ -18,6 +18,17 @@ export const CLAUDE_IDLE = '\u2733' // ✳ (eight-spoked asterisk — Claude Cod
 const CLAUDE_MANAGEMENT_TITLE_RE =
   /^\s*(?:"(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?"|'(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?'|(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?)\s+agents\s*$/i
 
+/** DSH-TUI titles are always `<prefix> 🐋 <session title>` (`useTerminalTitle` in its
+ *  Chat screen), and the whale is the only part no other agent emits. It has to be
+ *  checked ahead of Gemini and Claude: DSH's idle prefix is `✦`, which is Gemini's
+ *  WORKING glyph, and its working prefixes are `⠂`/`⠐`, which are braille spinners
+ *  Claude's generic heuristic claims. */
+export const DSH_WHALE = '\u{1F40B}' // 🐋
+
+export function isDshTerminalTitle(title: string): boolean {
+  return title.includes(DSH_WHALE)
+}
+
 export const GEMINI_WORKING = '\u2726' // ✦
 export const GEMINI_SILENT_WORKING = '\u23F2' // ⏲
 export const GEMINI_IDLE = '\u25C7' // ◇
@@ -34,6 +45,11 @@ export function containsBrailleSpinner(title: string): boolean {
 }
 
 export function isGeminiTerminalTitle(title: string): boolean {
+  // Why: DSH-TUI's idle prefix is `✦`, Gemini's working glyph. The whale is decisive
+  // and is checked first so a resting DSH pane never reads as a working Gemini.
+  if (isDshTerminalTitle(title)) {
+    return false
+  }
   // Why: Gemini OSC glyphs are stronger evidence than any cwd/session text.
   if (
     title.includes(GEMINI_PERMISSION) ||
@@ -88,6 +104,11 @@ export function isPiAgentTitle(title: string): boolean {
  */
 function computeIsClaudeAgent(title: string): boolean {
   if (!title || isClaudeManagementTitle(title) || isOpenCodeNativeTitle(title)) {
+    return false
+  }
+  // Why: DSH's working title is `⠂ 🐋 …`/`⠐ 🐋 …`, and the braille branch below would
+  // otherwise claim every frame of it for Claude.
+  if (isDshTerminalTitle(title)) {
     return false
   }
   const lower = title.toLowerCase()
@@ -149,6 +170,10 @@ function computeAgentLabel(title: string): string | null {
     title.startsWith('* ')
   ) {
     return 'Claude Code'
+  }
+  // Why before Gemini: see isDshTerminalTitle — the two share the `✦` glyph.
+  if (isDshTerminalTitle(title)) {
+    return 'DeepSeek Harness'
   }
   if (isGeminiTerminalTitle(title)) {
     return 'Gemini CLI'
@@ -226,6 +251,7 @@ export const getAgentLabel: (title: string) => string | null =
   memoizeTitleClassification(computeAgentLabel)
 
 const TITLE_LABEL_TO_AGENT: Partial<Record<string, TuiAgent>> = {
+  'DeepSeek Harness': 'dsh',
   'Claude Code': 'claude',
   OpenClaude: 'openclaude',
   Codex: 'codex',

@@ -1,5 +1,6 @@
 import { getTuiAgentDetectCommands, TUI_AGENT_CONFIG } from './tui-agent-config'
 import { EXACT_NODE_ENTRYPOINT_IDENTITIES } from './agent-node-entrypoint-identities'
+import { NODE_PACKAGE_SCRIPT_ENTRYPOINTS } from './agent-node-package-entrypoints'
 import type { AgentType } from './agent-status-types'
 import type { TuiAgent } from './tui-agent'
 import { filterHeadlessOneShotAgentCommand } from './agent-headless-command'
@@ -50,10 +51,6 @@ const INTERPRETER_OPTIONS_WITH_VALUE = new Set([
   '--experimental-loader'
 ])
 const INTERPRETER_OPTIONS_WITH_INLINE_SOURCE = new Set(['-e', '--eval', '-p', '--print', '--check'])
-const NODE_PACKAGE_SCRIPT_ENTRYPOINTS: Record<string, readonly string[]> = {
-  codex: ['node_modules/@openai/codex/'],
-  gemini: ['node_modules/@google/gemini-cli/']
-}
 const PYTHON_SCRIPT_ENTRYPOINT_DIRECTORIES = ['/bin/', '/scripts/', '/site-packages/']
 
 const PROCESS_TO_AGENT = new Map<string, TuiAgent>()

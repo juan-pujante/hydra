@@ -18,7 +18,8 @@ export const RESUMABLE_TUI_AGENTS = [
   'prime-agent',
   'copilot',
   'kimi',
-  'muse'
+  'muse',
+  'dsh'
 ] as const satisfies readonly TuiAgent[]
 
 export type ResumableTuiAgent = (typeof RESUMABLE_TUI_AGENTS)[number]
@@ -205,6 +206,12 @@ export function extractAgentProviderSession(
       const id = readSessionId(payload, ['session_id'])
       return id ? withTranscriptPath({ key: 'session_id', id }, payload) : null
     }
+    // Why: DSH's hook bridge always sends an empty `transcript_path` (its persistence seam
+    // exposes no artifact path), so the session id alone carries the resume target.
+    case 'dsh': {
+      const id = readSessionId(payload, ['session_id'])
+      return id ? { key: 'session_id', id } : null
+    }
     case 'antigravity': {
       const id = readSessionId(payload, ['conversationId'])
       return id ? { key: 'conversation_id', id } : null
@@ -305,5 +312,9 @@ export function getAgentResumeArgv(
       return providerSession.key === 'session_id' ? ['kimi', '--session', id] : null
     case 'muse':
       return providerSession.key === 'session_id' ? ['muse', 'resume', id] : null
+    // Why: `dsh-tui --resume <id>` re-enters the session the launcher recorded for this
+    // workspace. DSH keys sessions by workspace path, so callers must keep the cwd.
+    case 'dsh':
+      return providerSession.key === 'session_id' ? ['dsh-tui', '--resume', id] : null
   }
 }

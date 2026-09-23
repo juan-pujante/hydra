@@ -22,6 +22,7 @@ import {
 import { getDevinManagedCommand, getDevinRemoteManagedCommand } from '../devin/hook-settings'
 import { getGrokManagedCommand } from '../grok/grok-hook-script'
 import { getMuseManagedCommand, getMuseRemoteManagedCommand } from '../muse/hook-settings'
+import { getDshManagedCommand, getDshRemoteManagedCommand } from '../dsh/hook-settings'
 import {
   wrapPosixHookCommand,
   wrapWindowsCmdHookCommand,
@@ -148,6 +149,13 @@ const buildersByAgent = new Map<string, CommandBuilders>([
     {
       local: (path) => [getMuseManagedCommand(path)],
       remote: (path) => [getMuseRemoteManagedCommand(path)]
+    }
+  ],
+  [
+    'dsh',
+    {
+      local: (path) => [getDshManagedCommand(path)],
+      remote: (path) => [getDshRemoteManagedCommand(path)]
     }
   ]
 ])

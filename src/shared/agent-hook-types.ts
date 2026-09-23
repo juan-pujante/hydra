@@ -18,7 +18,8 @@ export const AGENT_HOOK_TARGETS = [
   'hermes',
   'devin',
   'kimi',
-  'muse'
+  'muse',
+  'dsh'
 ] as const
 export type AgentHookTarget = (typeof AGENT_HOOK_TARGETS)[number]
 

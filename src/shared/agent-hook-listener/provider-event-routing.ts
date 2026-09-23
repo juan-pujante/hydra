@@ -35,6 +35,10 @@ export function isNewTurnEvent(source: AgentHookSource, eventName: unknown): boo
     case 'muse':
       // Muse uses Claude-compatible lifecycle events.
       return eventName === 'UserPromptSubmit'
+    case 'dsh':
+      // Why: DSH's Claude-Code hook bridge fires SessionStart once per session before the
+      // first turn, which is the point stale tool/prompt caches from a reused pane must go.
+      return eventName === 'SessionStart' || eventName === 'UserPromptSubmit'
     case 'codex':
       return eventName === 'SessionStart' || eventName === 'UserPromptSubmit'
     case 'gemini':
@@ -137,6 +141,9 @@ export function extractToolFields(
     // Muse uses Claude-compatible tool fields.
     // falls through
     case 'muse':
+    // DSH's own Claude-Code hook bridge emits Claude's tool_name/tool_input verbatim.
+    // falls through
+    case 'dsh':
       return extractClaudeToolFields(eventName, hookPayload)
     case 'codex':
       return extractCodexToolFields(eventName, hookPayload)
