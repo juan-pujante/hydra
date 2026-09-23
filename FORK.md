@@ -35,6 +35,29 @@ git config rerere.enabled true
 `rerere` remembers conflict resolutions for reuse; always review the result.
 Do not rewrite the published history of `main` or force-push to match Orca.
 
+## Upstream review and integration cadence
+
+Review upstream changes weekly and prioritize stable Orca releases as integration
+points. This is a maintenance policy, not an automatic sync or scheduled job.
+
+- Security fixes and fixes for failures affecting Hydra: review and integrate
+  promptly after validation.
+- Stable releases: use as the usual integration points, with Hydra's own tests.
+- Routine changes on `upstream/main`: review weekly and integrate when useful.
+- Large or experimental changes: wait until they stabilize.
+
+Being behind upstream is not itself a reason to merge. Review the changes before
+choosing a release or commit to integrate; do not automatically follow every commit
+or let differences accumulate for months. Upstream integration is deferred for now.
+
+Keep `main` stable. Use one branch per feature, fix, or upstream integration and
+review changes through a PR in Hydra; no permanent `develop` branch is needed.
+Validate Desktop and affected Hydra features before merging. Preserve upstream
+ancestry with merge commits for both the integration and its PR.
+
+All commit messages must be in English, without co-author attribution or
+`Co-authored-by` trailers.
+
 ## Integrating an Orca update
 
 Start with a clean working tree and replace `YYYY-MM-DD` with the date:
