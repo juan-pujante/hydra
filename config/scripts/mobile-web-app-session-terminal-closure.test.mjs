@@ -425,8 +425,14 @@ const MERMAID_PACKAGE = 'node_modules/mermaid/'
  *
  *   modules        4215 -> 4216   (+1)
  *   local modules  1029 -> 1030   (+1)
+ *
+ * DeepSeek Harness then joined the mobile agent catalog with its bundled icon
+ * (`src/shared/agent-icons/dsh.png`), the same one-input shape Muse added above.
+ *
+ *   modules        4216 -> 4217   (+1)
+ *   local modules  1030 -> 1031   (+1)
  */
-const SESSION_ROUTE_MODULES = 4216
+const SESSION_ROUTE_MODULES = 4217
 
 /** What the page enters this route through once the route is a switch with a `.web.tsx` sibling. */
 const ROUTE_ENTRY = [
