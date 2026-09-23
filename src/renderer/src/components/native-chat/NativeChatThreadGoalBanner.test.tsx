@@ -65,6 +65,25 @@ describe('NativeChatThreadGoalBanner', () => {
     expect(screen.queryByRole('button', { name: 'Resume goal' })).toBeNull()
   })
 
+  it('keeps a square top when the task strip sits on it', () => {
+    vi.useFakeTimers({ now: NOW })
+    render(
+      <TooltipProvider>
+        <NativeChatThreadGoalBanner
+          goal={goal()}
+          pending={false}
+          isVisible
+          cappedByTasks
+          runningTurn={null}
+          onChange={() => {}}
+        />
+      </TooltipProvider>
+    )
+    const tab = document.querySelector('[data-native-chat-thread-goal] .border')
+    expect(tab?.classList.contains('rounded-t-md')).toBe(false)
+    expect(tab?.classList.contains('border-t-0')).toBe(true)
+  })
+
   it('shows the reported time for an active goal while no turn runs', () => {
     vi.useFakeTimers({ now: NOW })
     renderBanner(goal(), false, null)

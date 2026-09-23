@@ -299,6 +299,49 @@ describe('background-task row reasons', () => {
   })
 })
 
+describe('NativeChatBackgroundTasksStatus goal dock', () => {
+  it('matches the goal tab width and keeps a square bottom while a goal is showing', () => {
+    render(
+      <DisclosureHost
+        isVisible
+        dockedOnGoal
+        tasks={TASKS}
+        settledTasks={[]}
+        indicatorActive
+        supportsTaskStop={false}
+        supportsStopAll={false}
+        stoppingTaskIds={new Set()}
+        stoppingAll={false}
+        onStop={() => {}}
+      />
+    )
+    const root = document.querySelector('[data-native-chat-background-tasks="true"]')
+    const inset = root?.querySelector('.px-2')
+    const card = inset?.firstElementChild
+    expect(card?.classList.contains('rounded-t-lg')).toBe(true)
+    expect(card?.classList.contains('rounded-lg')).toBe(false)
+  })
+
+  it('stays as wide as the message box when no goal is attached', () => {
+    render(
+      <DisclosureHost
+        isVisible
+        tasks={TASKS}
+        settledTasks={[]}
+        indicatorActive
+        supportsTaskStop={false}
+        supportsStopAll={false}
+        stoppingTaskIds={new Set()}
+        stoppingAll={false}
+        onStop={() => {}}
+      />
+    )
+    const root = document.querySelector('[data-native-chat-background-tasks="true"]')
+    expect(root?.querySelector('.px-2')).toBeNull()
+    expect(root?.querySelector('.rounded-lg')).not.toBeNull()
+  })
+})
+
 it('stops elapsed renders in a hidden pane and catches up on reveal', () => {
   vi.useFakeTimers()
   vi.setSystemTime(100_000)

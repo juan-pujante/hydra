@@ -17,6 +17,7 @@ export function NativeChatStructuredSessionStatus(props: {
   isVisible: boolean
   backgroundTasks: StructuredSessionBackgroundTasksView
   stopBackgroundTask: (taskId?: string) => Promise<unknown>
+  dockedOnGoal?: boolean
 }): React.JSX.Element {
   const [stopping, setStopping] = useState<StoppingBackgroundTasks | null>(null)
   const [expanded, setExpanded] = useState<{ sessionId: string; expanded: boolean } | null>(null)
@@ -71,6 +72,7 @@ export function NativeChatStructuredSessionStatus(props: {
           stoppingAll={activeStopping?.all ?? false}
           expanded={expanded?.sessionId === props.sessionId && expanded.expanded}
           onExpandedChange={(value) => setExpanded({ sessionId: props.sessionId, expanded: value })}
+          dockedOnGoal={props.dockedOnGoal}
           onStop={onStop}
         />
       ) : null}
